@@ -15,9 +15,11 @@ const app = express();
 app.get('/user', function (req, res) {
 
     let from = Number(req.query.from) || 0;
-    let limit = Number(req.query.limit) || 4;
+    let limit = Number(req.query.limit) || 10;
 
-    User.find({})
+    User.find({
+            status: true
+        })
         .skip(from)
         .limit(limit)
         .exec((err, users) => {
@@ -28,9 +30,14 @@ app.get('/user', function (req, res) {
                 });
             }
 
-            res.json({
-                ok: true,
-                user: users
+            User.count({
+                status: true
+            }, (error, total) => {
+                res.json({
+                    ok: true,
+                    user: users,
+                    count: total
+                });
             });
         });
 });
@@ -91,6 +98,39 @@ app.put('/user/:id', function (req, res) {
         res.json({
             ok: true,
             user: userDB
+        });
+    });
+});
+
+app.delete('/user/:id', function (req, res) {
+
+    let id = req.params.id;
+
+    let stateChanged = {
+        status: false
+    };
+
+    //User.findByIdAndRemove(id, (err, deletedUser) => {
+    User.findByIdAndUpdate(id, stateChanged, {
+        new: true
+    }, (err, deletedUser) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        if (!deletedUser) {
+            return res.status(400).json({
+                ok: false,
+                message: 'User not found'
+            });
+        }
+
+        res.json({
+            ok: true,
+            deletedUser
         });
     });
 });

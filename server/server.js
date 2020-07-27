@@ -29,7 +29,7 @@ app.use(require('./routes/user_routes'));
 mongoose.set('useCreateIndex', true);
 
 //Creating connection to mongoDB
-mongoose.connect('mongodb://localhost:27017/courseDB', {
+mongoose.connect(process.env.URL_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }, (err, res) => {
