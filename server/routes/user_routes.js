@@ -8,11 +8,12 @@ const _ = require('underscore');
 
 //Creates a User model object defined in that file
 const User = require('../models/users');
+const {verifyToken, verifyAdmin} = require('../middlewares/authentication');
 
 const app = express();
 
 //Defines a route to make get requests to response with all the users
-app.get('/user', function (req, res) {
+app.get('/user', verifyToken, function (req, res) {
 
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.limit) || 10;
@@ -30,7 +31,7 @@ app.get('/user', function (req, res) {
                 });
             }
 
-            User.count({
+            User.countDocuments({
                 status: true
             }, (error, total) => {
                 res.json({
@@ -43,7 +44,7 @@ app.get('/user', function (req, res) {
 });
 
 //Defines a route to make post requests to save users' data
-app.post('/user', function (req, res) {
+app.post('/user', [verifyToken, verifyAdmin], function (req, res) {
 
     //Gets payload data in a json format
     let body = req.body;
@@ -74,7 +75,7 @@ app.post('/user', function (req, res) {
 });
 
 //Defines a route to make put requests to update user's data
-app.put('/user/:id', function (req, res) {
+app.put('/user/:id', [verifyToken, verifyAdmin], function (req, res) {
 
     //Gets id passed by url and stores it in a variable
     let id = req.params.id;
@@ -86,7 +87,8 @@ app.put('/user/:id', function (req, res) {
     //executes a callback with the response
     User.findByIdAndUpdate(id, body, {
         new: true,
-        runValidators: true
+        runValidators: true,
+        context: 'query'
     }, (err, userDB) => {
         if (err) {
             return res.status(400).json({
@@ -102,7 +104,7 @@ app.put('/user/:id', function (req, res) {
     });
 });
 
-app.delete('/user/:id', function (req, res) {
+app.delete('/user/:id', [verifyToken, verifyAdmin], function (req, res) {
 
     let id = req.params.id;
 

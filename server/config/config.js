@@ -21,3 +21,13 @@ else{
 }
 
 process.env.URL_DB = urlDB;
+
+//=========================================
+//TOKEN EXPIRATION
+//=========================================
+process.env.TOKEN_EXPIRATION = "1hrs";
+
+//=========================================
+//SEED
+//=========================================
+process.env.SEED = process.env.SEED || 'development-seed';

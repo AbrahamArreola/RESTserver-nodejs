@@ -46,6 +46,14 @@ let userSchema = new Schema({
     }
 });
 
+userSchema.methods.toJSON = function(){
+
+    let userObject = this.toObject();
+    delete userObject.password;
+
+    return userObject
+}
+
 //Modifies the default message to specify the message which needs to be shown
 userSchema.plugin(uniqueValidator, {message: '{PATH} must be unique'});
 

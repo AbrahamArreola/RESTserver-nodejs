@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.set('port', process.env.PORT);
 
 //Imports module user_routes which contains all the user http routes
-app.use(require('./routes/user_routes'));
+app.use(require('./routes/index'));
 
 //Necessary in order to work with mongoose
 mongoose.set('useCreateIndex', true);
