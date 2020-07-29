@@ -10,6 +10,8 @@ const bodyParser = require('body-parser');
 //Imports mongoose module to work with the NoSQL database MongoDB
 const mongoose = require('mongoose');
 
+const path = require('path');
+
 const app = express();
 
 //Necessary in order to work with body-parser module
@@ -18,6 +20,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+app.use(express.static(path.resolve(__dirname, '../public')));
 
 //Saves the port available to work with
 app.set('port', process.env.PORT);
