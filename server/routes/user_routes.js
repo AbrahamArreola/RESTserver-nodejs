@@ -81,6 +81,8 @@ app.put('/user/:id', [verifyToken, verifyAdmin], function (req, res) {
     let id = req.params.id;
 
     //Creates the new json body filtering only the fields we want to work with
+    //Note: Underscore.pick selects the key/value pairs from the payload, but if there is no such key in the payload,
+    //creates an empty dictionary, and due this, if there are not passed values in the request, the request will be valid
     let body = _.pick(req.body, ['name', 'email', 'img', 'role', 'status']);
 
     //Executes a query which search in the DB the requested id's data and if it's found, replaces the data with the new one, then
@@ -88,7 +90,8 @@ app.put('/user/:id', [verifyToken, verifyAdmin], function (req, res) {
     User.findByIdAndUpdate(id, body, {
         new: true,
         runValidators: true,
-        context: 'query'
+        context: 'query',
+        useFindAndModify: true
     }, (err, userDB) => {
         if (err) {
             return res.status(400).json({
@@ -114,19 +117,13 @@ app.delete('/user/:id', [verifyToken, verifyAdmin], function (req, res) {
 
     //User.findByIdAndRemove(id, (err, deletedUser) => {
     User.findByIdAndUpdate(id, stateChanged, {
-        new: true
+        new: true,
+        useFindAndModify: true
     }, (err, deletedUser) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
                 err
-            });
-        }
-
-        if (!deletedUser) {
-            return res.status(400).json({
-                ok: false,
-                message: 'User not found'
             });
         }
 
