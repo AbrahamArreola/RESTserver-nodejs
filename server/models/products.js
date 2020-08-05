@@ -8,6 +8,7 @@ let Product = Schema({
     name: {type: String, required: [true, 'Name necessary']},
     price: {type: Number, required: [true, 'Price necessary']},
     description: {type: String, required: false},
+    img: {type: String, required: false},
     available: {type: String, required: true, default: true},
     category: {type: Schema.Types.ObjectId, ref: 'Category'},
     user: {type: Schema.Types.ObjectId, ref: 'User'}

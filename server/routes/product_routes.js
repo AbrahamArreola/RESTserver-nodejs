@@ -66,8 +66,6 @@ app.get('/products/:id', verifyToken, function(req, res){
 app.post('/products', verifyToken, async function(req, res){
 
     try {
-        const body = req.body;
-
         let newProduct = new Product({
             name: req.body.name,
             price: req.body.price,
@@ -96,7 +94,7 @@ app.put('/products/:id', verifyToken, function(req, res){
 
     let body = req.body;
 
-    Product.findByIdAndUpdate(id, body, {new: true, runValidators: true, context: 'query'}, (err, product) => {    
+    Product.findByIdAndUpdate(id, body, {new: true, runValidators: true, context: 'query', useFindAndModify: false}, (err, product) => {    
         if(err){
             if(!err.errors){
                 return res.status(400).json({
@@ -125,7 +123,7 @@ app.delete('/products/:id', [verifyToken, verifyAdmin], function(req, res){
     let id = req.params.id;
 
     Product.findByIdAndRemove(id, {
-        useFindAndModify: true
+        useFindAndModify: false
     }, (err, deletedProduct) => {
         if (err) {
             return res.status(400).json({
